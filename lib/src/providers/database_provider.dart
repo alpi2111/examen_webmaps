@@ -114,7 +114,6 @@ class DatabaseProvider {
         print("Filas afectadas: ${res.affectedRows}");
       }
     } catch (e) {
-      // TODO
       print(e);
     }
   }
@@ -130,7 +129,6 @@ class DatabaseProvider {
         print("Filas afectadas: ${res.affectedRows}");
       }
     } catch (e) {
-      // TODO
       print(e);
     }
   }
@@ -157,7 +155,6 @@ class DatabaseProvider {
       }
       return null;
     } catch (e) {
-      // TODO
       print(e);
       return null;
     }
@@ -172,7 +169,6 @@ class DatabaseProvider {
       }
     } catch (e) {
       _estaConectado = true;
-      // TODO
       print(e);
     }
   }
