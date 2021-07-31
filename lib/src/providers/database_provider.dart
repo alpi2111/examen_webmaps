@@ -72,8 +72,6 @@ class DatabaseProvider {
       if (_database != null) {
         if (orderBy != null || orderBy != '') {
           query += " ORDER BY $orderBy ASC";
-          print(orderBy);
-          print(query);
         }
         final resultado = await _database!.query(query);
         if (resultado.length > 0) {
@@ -129,6 +127,34 @@ class DatabaseProvider {
     } catch (e) {
       // TODO
       print(e);
+    }
+  }
+
+  Future<UsuarioModel?> buscarUsuarioPor(String param, String campo) async {
+    try {
+      UsuarioModel model = UsuarioModel();
+      if (_database != null) {
+        final res = await _database!.query("SELECT usuario, pais, estado, genero FROM usuarios WHERE $campo = '$param'");
+        if (res.length > 0) {
+          res.forEach((element) {
+            // print(element.values);
+            final tempValues = element.values;
+            model = UsuarioModel(
+              usuario: tempValues!.elementAt(0).toString(),
+              pais: tempValues.elementAt(1).toString(),
+              estado: tempValues.elementAt(2).toString(),
+              genero: tempValues.elementAt(3).toString(),
+            );
+            // usuarios.add(tempUsr);
+          });
+          return model;
+        }
+      }
+      return null;
+    } catch (e) {
+      // TODO
+      print(e);
+      return null;
     }
   }
 }

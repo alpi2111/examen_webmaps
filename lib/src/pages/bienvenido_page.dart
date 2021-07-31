@@ -5,6 +5,8 @@ import 'package:examen_webmaps/src/models/usuario_model.dart';
 import 'package:examen_webmaps/src/providers/database_provider.dart';
 import 'package:examen_webmaps/src/modals/alerts_modals.dart' as modal;
 
+String _buscarPor = "";
+
 class BienvenidoPage extends StatefulWidget {
   @override
   _BienvenidoPageState createState() => _BienvenidoPageState();
@@ -35,6 +37,7 @@ class _BienvenidoPageState extends State<BienvenidoPage> {
 
   List<UsuarioModel> _usuarios = [];
   String _ordenarPor = "";
+  String _palabraBuscar = "";
 
   @override
   Widget build(BuildContext context) {
@@ -132,9 +135,67 @@ class _BienvenidoPageState extends State<BienvenidoPage> {
                 ),
               ],
             ),
+            Row(
+              children: [
+                Flexible(
+                  flex: 4,
+                  child: DropMenuBuscarPor(),
+                ),
+                Flexible(
+                  flex: 8,
+                  child: TextField(
+                    decoration: InputDecoration(labelText: 'Palabra a buscar'),
+                    onChanged: (val) {
+                      _palabraBuscar = val.trim();
+                    },
+                    onSubmitted: (val) {
+                      _palabraBuscar = val.trim();
+                    },
+                  ),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: ElevatedButton(
+                    child: Text('Buscar'),
+                    onPressed: () async {
+                      if (_buscarPor != '') {
+                        if (_palabraBuscar != '') {
+                          final usuario = await _db.buscarUsuarioPor(_palabraBuscar, _buscarPor);
+                          if (usuario != null) {
+                            await modal.showCustomContentTextDialog(
+                              context: context,
+                              titulo: 'Encontrado',
+                              contenido: '${usuario.usuario}\n${usuario.pais}\n${usuario.estado}\n${usuario.genero}',
+                            );
+                          } else {
+                            await modal.showCustomContentTextDialog(
+                              context: context,
+                              titulo: 'Error',
+                              contenido: 'No se encontro usuario',
+                            );
+                          }
+                        } else {
+                          await modal.showCustomContentTextDialog(
+                            context: context,
+                            titulo: 'Informacion',
+                            contenido: 'Ingresa palabra a buscar',
+                          );
+                        }
+                      } else {
+                        await modal.showCustomContentTextDialog(
+                          context: context,
+                          titulo: 'Informacion',
+                          contenido: 'Selecciona tipo de busqueda',
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: 20.0),
             FutureBuilder(
-              future: _db.obtenerTodosLosUsuarios(_ordenarPor),
+              future: _db.obtenerTodosLosUsuarios(_ordenarPor != '' ? _ordenarPor : 'usuario'),
               builder: (BuildContext context, AsyncSnapshot<List<UsuarioModel>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
                 if (snapshot.data != null) {
@@ -166,6 +227,47 @@ class _BienvenidoPageState extends State<BienvenidoPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class DropMenuBuscarPor extends StatefulWidget {
+  @override
+  _DropMenuBuscarPorState createState() => _DropMenuBuscarPorState();
+}
+
+class _DropMenuBuscarPorState extends State<DropMenuBuscarPor> {
+  // String _buscarPor = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton(
+      isExpanded: true,
+      value: _buscarPor != '' ? _buscarPor : null,
+      items: [
+        DropdownMenuItem(
+          value: "usuario",
+          child: Text('Usuario'),
+        ),
+        DropdownMenuItem(
+          value: "pais",
+          child: Text('Pais'),
+        ),
+        DropdownMenuItem(
+          value: "estado",
+          child: Text('Estado'),
+        ),
+        DropdownMenuItem(
+          value: "genero",
+          child: Text('Genero'),
+        ),
+      ],
+      onChanged: (val) {
+        setState(() {
+          _buscarPor = val.toString();
+        });
+      },
+      hint: Text('Buscar por...'),
     );
   }
 }
