@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:examen_webmaps/src/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:examen_webmaps/src/models/usuario_model.dart';
 import 'package:examen_webmaps/src/providers/database_provider.dart';
@@ -44,6 +45,16 @@ class _BienvenidoPageState extends State<BienvenidoPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Bienvenido Page'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            tooltip: 'Cerrar Sesion',
+            onPressed: () async {
+              await _db.cerrarConexion();
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),

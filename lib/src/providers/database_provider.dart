@@ -27,6 +27,9 @@ class DatabaseProvider {
   String? _usrName;
   String? _pass;
   MySqlConnection? _database;
+  bool _estaConectado = false;
+
+  bool get estaConectado => _estaConectado;
 
   Future<void> connectDb() async {
     try {
@@ -39,8 +42,10 @@ class DatabaseProvider {
       );
       _database = await MySqlConnection.connect(settings);
       print("Connected to $_database");
+      _estaConectado = true;
     } catch (e) {
       print("Error : $e");
+      _estaConectado = false;
     }
   }
 
@@ -155,6 +160,20 @@ class DatabaseProvider {
       // TODO
       print(e);
       return null;
+    }
+  }
+
+  Future<void> cerrarConexion() async {
+    try {
+      if (_database != null) {
+        final res = await _database!.close();
+        print(res);
+        _estaConectado = false;
+      }
+    } catch (e) {
+      _estaConectado = true;
+      // TODO
+      print(e);
     }
   }
 }

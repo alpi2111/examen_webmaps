@@ -87,14 +87,17 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text('Iniciar Sesion'),
                     onPressed: () async {
                       if (!_keyFormLogin.currentState!.validate()) return;
-                      _loginModel.usuario = "";
-                      _loginModel.pass = "";
-                      _keyFormLogin.currentState!.save();
                       modal.showCustomLoadingDialog(
                         context: context,
                         titulo: 'Iniciando Sesion...',
                       );
                       final _db = DatabaseProvider();
+                      if (!_db.estaConectado) {
+                        await _db.connectDb();
+                      }
+                      _loginModel.usuario = "";
+                      _loginModel.pass = "";
+                      _keyFormLogin.currentState!.save();
                       print(_loginModel.usuario);
                       print(_loginModel.pass);
                       final inicio = await _db.loginUsuario(_loginModel);
