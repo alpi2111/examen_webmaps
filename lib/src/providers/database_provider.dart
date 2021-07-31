@@ -70,8 +70,10 @@ class DatabaseProvider {
     List<UsuarioModel> usuarios = [];
     try {
       if (_database != null) {
-        if (orderBy != null) {
-          query += " ORDER BY '$orderBy'";
+        if (orderBy != null || orderBy != '') {
+          query += " ORDER BY $orderBy ASC";
+          print(orderBy);
+          print(query);
         }
         final resultado = await _database!.query(query);
         if (resultado.length > 0) {

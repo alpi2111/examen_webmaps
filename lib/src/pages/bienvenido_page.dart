@@ -34,6 +34,7 @@ class _BienvenidoPageState extends State<BienvenidoPage> {
   ];
 
   List<UsuarioModel> _usuarios = [];
+  String _ordenarPor = "";
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +97,44 @@ class _BienvenidoPageState extends State<BienvenidoPage> {
               ],
             ),
             SizedBox(height: 20.0),
+            Row(
+              children: [
+                Flexible(
+                  flex: 5,
+                  child: DropdownButton(
+                    isExpanded: true,
+                    value: _ordenarPor != '' ? _ordenarPor : null,
+                    items: [
+                      DropdownMenuItem(
+                        value: "usuario",
+                        child: Text('Usuario'),
+                      ),
+                      DropdownMenuItem(
+                        value: "pais",
+                        child: Text('Pais'),
+                      ),
+                      DropdownMenuItem(
+                        value: "estado",
+                        child: Text('Estado'),
+                      ),
+                      DropdownMenuItem(
+                        value: "genero",
+                        child: Text('Genero'),
+                      ),
+                    ],
+                    onChanged: (val) {
+                      setState(() {
+                        _ordenarPor = val.toString();
+                      });
+                    },
+                    hint: Text('Ordenar por...'),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20.0),
             FutureBuilder(
-              future: _db.obtenerTodosLosUsuarios(),
+              future: _db.obtenerTodosLosUsuarios(_ordenarPor),
               builder: (BuildContext context, AsyncSnapshot<List<UsuarioModel>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
                 if (snapshot.data != null) {
