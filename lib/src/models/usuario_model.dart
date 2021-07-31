@@ -23,6 +23,7 @@ class UsuarioModel {
         pais: json["pais"],
         estado: json["estado"],
         genero: json["genero"],
+        //1,000,000
       );
 
   Map<String, dynamic> toJson() => {
